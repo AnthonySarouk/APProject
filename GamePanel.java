@@ -28,11 +28,6 @@ public class GamePanel extends JPanel implements ActionListener{
 		this.setPreferredSize(new Dimension(SCREEN_WIDTH,SCREEN_HEIGHT));
 		this.setBackground(Color.darkGray);
 		this.setFocusable(true);
-		reset = new JButton();
-		reset.setText("Restart");
-		reset.setSize(100, 50);
-		reset.setLocation(600, 200);
-		reset.addActionListener(this);
 		this.addKeyListener(new MyKeyAdapter());
 		startGame();
 	}
@@ -49,12 +44,7 @@ public class GamePanel extends JPanel implements ActionListener{
 	public void draw(Graphics g) {
 		
 		if(running) {
-			/*
-			for(int i=0;i<SCREEN_HEIGHT/UNIT_SIZE;i++) {
-				g.drawLine(i*UNIT_SIZE, 0, i*UNIT_SIZE, SCREEN_HEIGHT);
-				g.drawLine(0, i*UNIT_SIZE, SCREEN_WIDTH, i*UNIT_SIZE);
-			}
-			*/
+			
 			g.setColor(Color.red);
 			g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
 		
@@ -65,12 +55,11 @@ public class GamePanel extends JPanel implements ActionListener{
 				}
 				else {
 					g.setColor(new Color(45,180,0));
-					//g.setColor(new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255)));
 					g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
 				}			
 			}
 			g.setColor(Color.red);
-			g.setFont( new Font("Ink Free",Font.BOLD, 40));
+			g.setFont(new Font("Ink Free",Font.BOLD, 40));
 			FontMetrics metrics = getFontMetrics(g.getFont());
 			g.drawString("Score: "+applesEaten, (SCREEN_WIDTH - metrics.stringWidth("Score: "+applesEaten))/2, g.getFont().getSize());
 		}
@@ -114,25 +103,25 @@ public class GamePanel extends JPanel implements ActionListener{
 		}
 	}
 	public void checkCollisions() {
-		//checks if head collides with body
+		
 		for(int i = bodyParts;i>0;i--) {
 			if((x[0] == x[i])&& (y[0] == y[i])) {
 				running = false;
 			}
 		}
-		//check if head touches left border
+	
 		if(x[0] < 0) {
 			running = false;
 		}
-		//check if head touches right border
+		
 		if(x[0] > SCREEN_WIDTH) {
 			running = false;
 		}
-		//check if head touches top border
+		
 		if(y[0] < 0) {
 			running = false;
 		}
-		//check if head touches bottom border
+		
 		if(y[0] > SCREEN_HEIGHT) {
 			running = false;
 		}
@@ -142,19 +131,40 @@ public class GamePanel extends JPanel implements ActionListener{
 		}
 	}
 	public void gameOver(Graphics g) {
-		//Score
+		
 		g.setColor(Color.red);
 		g.setFont( new Font("Ink Free",Font.BOLD, 40));
 		FontMetrics metrics1 = getFontMetrics(g.getFont());
 		g.drawString("Score: "+applesEaten, (SCREEN_WIDTH - metrics1.stringWidth("Score: "+applesEaten))/2, g.getFont().getSize());
-		//Game Over text
 		g.setColor(Color.red);
 		g.setFont( new Font("Ink Free",Font.BOLD, 75));
 		FontMetrics metrics2 = getFontMetrics(g.getFont());
 		g.drawString("Game Over", (SCREEN_WIDTH - metrics2.stringWidth("Game Over"))/2, SCREEN_HEIGHT/2);
-		this.add(reset);
+		reset = new JButton();
+		reset.setText("Restart");
+		reset.setSize(100, 50);
+		reset.setLocation(600, 200);
+        this.add(reset);
+		reset.addActionListener(new ActionListener() {
+            @Override
+	        public void actionPerformed(ActionEvent e) {
+                restart();
+                startGame();
+                repaint();
+                }
+         });
+		
+		
 	}
-	
+	public void restart(){
+		this.remove(reset);
+        this.remove(game);
+        this.add(game);
+		bodyParts = 6;
+		applesEaten = 0;
+		repaint();
+		
+	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
@@ -164,6 +174,7 @@ public class GamePanel extends JPanel implements ActionListener{
 			checkCollisions();
 		}
 		repaint();
+	    
 	}
 	
 	public class MyKeyAdapter extends KeyAdapter{

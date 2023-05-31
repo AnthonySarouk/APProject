@@ -5,8 +5,10 @@ import java.awt.event.ActionListener;
 public class GameFrame extends JFrame implements ActionListener{
 	JButton reset;
 	GamePanel game = new GamePanel();
+	ImageIcon image = new ImageIcon("snake.png");
 	GameFrame(){
 		this.add(game);
+		this.setIconImage(image.getImage());
 		this.setTitle("Snake");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(false);
@@ -25,3 +27,4 @@ public class GameFrame extends JFrame implements ActionListener{
 	}
 	
 }
+ 

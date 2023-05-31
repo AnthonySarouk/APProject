@@ -1,9 +1,9 @@
-package APProject;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.Random;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 public class GamePanel extends JPanel implements ActionListener{
 
 	static final int SCREEN_WIDTH = 1300;
@@ -21,12 +21,18 @@ public class GamePanel extends JPanel implements ActionListener{
 	boolean running = false;
 	Timer timer;
 	Random random;
-	
+	JButton reset;
+	GamePanel game;
 	GamePanel(){
 		random = new Random();
 		this.setPreferredSize(new Dimension(SCREEN_WIDTH,SCREEN_HEIGHT));
-		this.setBackground(Color.black);
+		this.setBackground(Color.darkGray);
 		this.setFocusable(true);
+		reset = new JButton();
+		reset.setText("Restart");
+		reset.setSize(100, 50);
+		reset.setLocation(600, 200);
+		reset.addActionListener(this);
 		this.addKeyListener(new MyKeyAdapter());
 		startGame();
 	}
@@ -96,6 +102,7 @@ public class GamePanel extends JPanel implements ActionListener{
 		case 'R':
 			x[0] = x[0] + UNIT_SIZE;
 			break;
+		
 		}
 		
 	}
@@ -145,7 +152,9 @@ public class GamePanel extends JPanel implements ActionListener{
 		g.setFont( new Font("Ink Free",Font.BOLD, 75));
 		FontMetrics metrics2 = getFontMetrics(g.getFont());
 		g.drawString("Game Over", (SCREEN_WIDTH - metrics2.stringWidth("Game Over"))/2, SCREEN_HEIGHT/2);
+		this.add(reset);
 	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
@@ -161,27 +170,31 @@ public class GamePanel extends JPanel implements ActionListener{
 		@Override
 		public void keyPressed(KeyEvent e) {
 			switch(e.getKeyCode()) {
-			case KeyEvent.VK_LEFT:
+			case KeyEvent.VK_A:
 				if(direction != 'R') {
 					direction = 'L';
 				}
 				break;
-			case KeyEvent.VK_RIGHT:
+			case KeyEvent.VK_D:
 				if(direction != 'L') {
 					direction = 'R';
 				}
 				break;
-			case KeyEvent.VK_UP:
+			case KeyEvent.VK_W:
 				if(direction != 'D') {
 					direction = 'U';
 				}
 				break;
-			case KeyEvent.VK_DOWN:
+			case KeyEvent.VK_S:
 				if(direction != 'U') {
 					direction = 'D';
 				}
 				break;
+			
 			}
 		}
+		
+	
+	
 	}
 }
