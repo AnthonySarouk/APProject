@@ -21,7 +21,8 @@ public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
     Random random;
     JButton reset;
-
+    int highscore = 0;
+    int highscore2;
     GamePanel() {
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -71,6 +72,7 @@ public class GamePanel extends JPanel implements ActionListener {
             g.setFont(new Font("Courier New", Font.BOLD, 40));
             FontMetrics metrics = getFontMetrics(g.getFont());
             g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics.stringWidth("Score: " + applesEaten)) / 2, g.getFont().getSize());
+            
         } else {
             gameOver(g);
         }
@@ -108,6 +110,7 @@ public class GamePanel extends JPanel implements ActionListener {
         if ((x[0] == appleX) && (y[0] == appleY)) {
             bodyParts++;
             applesEaten++;
+            highscore2 = applesEaten;
             newApple();
         }
     }
@@ -140,35 +143,9 @@ public class GamePanel extends JPanel implements ActionListener {
             timer.stop();
         }
     }
-
-    public void gameOver(Graphics g) {
-
-        g.setColor(Color.red);
-        g.setFont(new Font("Courier New", Font.BOLD, 40));
-        FontMetrics metrics1 = getFontMetrics(g.getFont());
-        g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics1.stringWidth("Score: " + applesEaten)) / 2, g.getFont().getSize());
-        g.setColor(Color.red);
-        g.setFont(new Font("Courier New", Font.BOLD, 75));
-        FontMetrics metrics2 = getFontMetrics(g.getFont());
-        g.drawString("Game Over", (SCREEN_WIDTH - metrics2.stringWidth("Game Over")) / 2, SCREEN_HEIGHT - 500);
-        reset = new JButton();
-        reset.setText("Restart");
-        reset.setBounds(570, 350, 150, 50);
-		Color customColor = new Color(250, 11, 11);
-		reset.setBackground(customColor);
-		Font font = new Font("Courier New", Font.BOLD, 20);  // Create a new font object
-		reset.setFont(font);  // Set the font of the button
-        this.add(reset);
-        reset.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                restart();
-            }
-        });
-    }
-
     public void restart() {
         bodyParts = 6;
+        highscore = applesEaten;
         applesEaten = 0;
         direction = 'R';
         running = false;
@@ -178,6 +155,52 @@ public class GamePanel extends JPanel implements ActionListener {
         reset.setVisible(false);
         repaint();
     }
+    private void updateHighScore() {
+        if (applesEaten > highscore) {
+            highscore = applesEaten;
+        }
+        else {
+            highscore = Math.max(highscore, highscore2);
+        }
+        
+    }
+
+    public void gameOver(Graphics g) {
+        System.out.println("Original Highscore2: " + highscore2);
+        System.out.println("Original Highscore: " + highscore);
+        updateHighScore();
+        System.out.println("Updated Highscore: " + highscore);
+        System.out.println("Highscore2: " + highscore2);
+        g.setColor(Color.red);
+        g.setFont(new Font("Courier New", Font.BOLD, 40));
+        FontMetrics metrics1 = getFontMetrics(g.getFont());
+        g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics1.stringWidth("Score: " + applesEaten)) / 2, g.getFont().getSize());
+        g.setColor(Color.red);
+        g.setFont(new Font("Courier New", Font.BOLD, 40));
+        FontMetrics metrics3 = getFontMetrics(g.getFont());
+        g.drawString("High Score: " + highscore, (SCREEN_WIDTH - metrics3.stringWidth("High Score: " + highscore)) / 1, g.getFont().getSize());
+        g.setColor(Color.red);
+        g.setFont(new Font("Courier New", Font.BOLD, 75));
+        FontMetrics metrics2 = getFontMetrics(g.getFont());
+        g.drawString("Game Over", (SCREEN_WIDTH - metrics2.stringWidth("Game Over")) / 2, SCREEN_HEIGHT - 500);
+        reset = new JButton();
+        reset.setText("Restart");
+        reset.setBounds(570, 350, 150, 50);
+		Color customColor = new Color(250, 11, 11);
+		reset.setBackground(customColor);
+		Font font = new Font("Courier New", Font.BOLD, 20); 
+		reset.setFont(font);  
+        this.add(reset);
+        reset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                restart();
+            }
+        });
+        
+    }
+
+   
 
     @Override
     public void actionPerformed(ActionEvent e) {
