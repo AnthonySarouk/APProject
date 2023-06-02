@@ -7,9 +7,9 @@ public class GamePanel extends JPanel implements ActionListener {
 
     static final int SCREEN_WIDTH = 1300;
     static final int SCREEN_HEIGHT = 750;
-    static final int UNIT_SIZE = 50;
-    static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / (UNIT_SIZE * UNIT_SIZE);
-    static final int DELAY = 175;
+    static final int UNIT_SIZE = 40;
+    static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / (UNIT_SIZE * UNIT_SIZE); //Divides total area of game screen by unit size
+    static final int DELAY = 150; //Determines the delay and how quickly the snake or other game elements will move.
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
     int bodyParts = 6;
@@ -17,12 +17,11 @@ public class GamePanel extends JPanel implements ActionListener {
     int appleX;
     int appleY;
     char direction = 'R';
-    boolean running = false;
-    Timer timer;
+    boolean running = false; //determines whether the game is running or not
+    Timer timer; // Used to create a delay for when the actionPerformed methods are called.
     Random random;
     JButton reset;
     int highscore = 0;
-    int highscore2;
     GamePanel() {
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -38,7 +37,7 @@ public class GamePanel extends JPanel implements ActionListener {
         running = true;
         timer = new Timer(DELAY, this);
         timer.start();
-	    int initialX = random.nextInt((SCREEN_WIDTH / UNIT_SIZE - 2)) + 1;
+	    int initialX = random.nextInt((SCREEN_WIDTH / UNIT_SIZE - 2)) + 1; // Assigns snakes head and body parts. For loops iterates bodyParts number of times to assign intial positions
         int initialY = random.nextInt((SCREEN_HEIGHT / UNIT_SIZE - 2)) + 1; 
         for (int i = 0; i < bodyParts; i++) {
             x[i] = initialX * UNIT_SIZE;
@@ -55,16 +54,17 @@ public class GamePanel extends JPanel implements ActionListener {
     public void draw(Graphics g) {
 
         if (running) {
-
+            //apple 
             g.setColor(Color.red);
             g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
-
+            
+            //snake
             for (int i = 0; i < bodyParts; i++) {
                 if (i == 0) {
                     g.setColor(Color.green);
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 } else {
-                    g.setColor(new Color(45, 180, 0));
+                    g.setColor(new Color(45, 100,200));
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 }
             }
@@ -83,7 +83,7 @@ public class GamePanel extends JPanel implements ActionListener {
         appleX = random.nextInt((int) (SCREEN_WIDTH / UNIT_SIZE)) * UNIT_SIZE;
         appleY = random.nextInt((int) (SCREEN_HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
     }
-
+    //Iterates through each body part and updates the position.
     public void move() {
         for (int i = bodyParts; i > 0; i--) {
             x[i] = x[i - 1];
@@ -107,10 +107,9 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void checkApple() {
-        if ((x[0] == appleX) && (y[0] == appleY)) {
+        if ((x[0] == appleX) && (y[0] == appleY)) { // if snake has collided with apple
             bodyParts++;
             applesEaten++;
-            highscore2 = applesEaten;
             newApple();
         }
     }
@@ -123,19 +122,19 @@ public class GamePanel extends JPanel implements ActionListener {
             }
         }
 
-        if (x[0] < 0) {
+        if (x[0] < 0) { //hit left wall
             running = false;
         }
 
-        if (x[0] >= SCREEN_WIDTH) {
+        if (x[0] >= SCREEN_WIDTH) { //hit right wall
             running = false;
         }
 
-        if (y[0] < 0) {
+        if (y[0] < 0) { //hit the ceiling or top boundary
             running = false;
         }
 
-        if (y[0] >= SCREEN_HEIGHT) {
+        if (y[0] >= SCREEN_HEIGHT) { //hits the bottom boundary/floor
             running = false;
         }
 
@@ -145,7 +144,7 @@ public class GamePanel extends JPanel implements ActionListener {
     }
     public void restart() {
         bodyParts = 6;
-        highscore = applesEaten;
+        highscore = Math.max(applesEaten, highscore);
         applesEaten = 0;
         direction = 'R';
         running = false;
@@ -155,22 +154,18 @@ public class GamePanel extends JPanel implements ActionListener {
         reset.setVisible(false);
         repaint();
     }
+    
     private void updateHighScore() {
         if (applesEaten > highscore) {
             highscore = applesEaten;
         }
-        else {
-            highscore = Math.max(highscore, highscore2);
-        }
+        
         
     }
 
     public void gameOver(Graphics g) {
-        System.out.println("Original Highscore2: " + highscore2);
-        System.out.println("Original Highscore: " + highscore);
+      
         updateHighScore();
-        System.out.println("Updated Highscore: " + highscore);
-        System.out.println("Highscore2: " + highscore2);
         g.setColor(Color.red);
         g.setFont(new Font("Courier New", Font.BOLD, 40));
         FontMetrics metrics1 = getFontMetrics(g.getFont());
@@ -178,7 +173,7 @@ public class GamePanel extends JPanel implements ActionListener {
         g.setColor(Color.red);
         g.setFont(new Font("Courier New", Font.BOLD, 40));
         FontMetrics metrics3 = getFontMetrics(g.getFont());
-        g.drawString("High Score: " + highscore, (SCREEN_WIDTH - metrics3.stringWidth("High Score: " + highscore)) / 1, g.getFont().getSize());
+        g.drawString("High Score: " + highscore, (SCREEN_WIDTH - metrics3.stringWidth("High Score: " + highscore)) - 500 , 100);
         g.setColor(Color.red);
         g.setFont(new Font("Courier New", Font.BOLD, 75));
         FontMetrics metrics2 = getFontMetrics(g.getFont());
@@ -200,7 +195,6 @@ public class GamePanel extends JPanel implements ActionListener {
         
     }
 
-   
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -209,6 +203,7 @@ public class GamePanel extends JPanel implements ActionListener {
             checkApple();
             checkCollisions();
         }
+        
         repaint();
     }
 
